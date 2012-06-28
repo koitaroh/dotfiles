@@ -133,6 +133,8 @@
 ;; ------------------------------------------------------------------------
 ;; @  color-theme.el
 ;; http://code.google.com/p/gnuemacscolorthemetest/
-(when (and (require 'color-theme nil t) (window-system))
-  (color-theme-initialize)
-  (color-theme-clarity))
+;;(when (and (require 'color-theme nil t) (window-system))
+;;  (color-theme-initialize)
+;;  (color-theme-clarity))
+
+(setq message-beep 'silent)
