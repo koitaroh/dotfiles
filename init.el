@@ -76,12 +76,6 @@
 (set-buffer-file-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-;; Yen-key and backslash.
-;(define-key global-map [?\] [?\\])
-;(define-key global-map [?\C-\] [?\C-\\])
-;(define-key global-map [?\M-\] [?\M-\\])
-;(define-key global-map [?\C-\M-\] [?\C-\M-\\])
-
 ;; Custom.
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -102,21 +96,22 @@
 ;; Font, width, height, color.
 (if (eq (window-system) 'ns)
     (progn
-      (create-fontset-from-ascii-font "Menlo-15:weight=normal:slant=normal" nil "menlokakugo")
+      (create-fontset-from-ascii-font "Menlo-12:weight=normal:slant=normal" nil "menlokakugo")
       (set-fontset-font "fontset-menlokakugo"
             'unicode
-            (font-spec :family "Hiragino Maru Gothic ProN" :size 14)
+            (font-spec :family "Hiragino Maru Gothic ProN" :size 11)
             nil
             'append)
       (add-to-list 'default-frame-alist '(font . "fontset-menlokakugo"))
-      (add-to-list 'default-frame-alist '(width . 128))
-      (add-to-list 'default-frame-alist '(height . 60))
+;;      (add-to-list 'default-frame-alist '(width . 128))
+;;      (add-to-list 'default-frame-alist '(height . 60))
       (add-to-list 'default-frame-alist '(foreground-color . "black"))
       (add-to-list 'default-frame-alist '(background-color . "white"))
       (add-to-list 'default-frame-alist '(cursor-color . "blue4"))))
 
 ;; Set background color of current line.
 ;; Color table: http://life.a.la9.jp/hp/color/rgb-tab.html
+
 ;;(global-hl-line-mode 1)
 ;;(set-face-background 'hl-line "oldlace")
 
@@ -133,8 +128,40 @@
 ;; ------------------------------------------------------------------------
 ;; @  color-theme.el
 ;; http://code.google.com/p/gnuemacscolorthemetest/
-;;(when (and (require 'color-theme nil t) (window-system))
-;;  (color-theme-initialize)
-;;  (color-theme-clarity))
+(when (and (require 'color-theme nil t) (window-system))
+  (color-theme-initialize)
+  (color-theme-clarity))
 
+;; Silent error beep
 (setq message-beep 'silent)
+
+;; For topcoder
+;;http://d.hatena.ne.jp/suztomo/20080905/1220633281
+(require 'flymake)
+
+(defun flymake-cc-init ()
+  (let* ((temp-file   (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+         (local-file  (file-relative-name
+                       temp-file
+                       (file-name-directory buffer-file-name))))
+    (list "g++" (list "-Wall" "-Wextra" "-fsyntax-only" local-file))))
+
+(push '("\\.cpp$" flymake-cc-init) flymake-allowed-file-name-masks)
+
+(add-hook 'c++-mode-hook
+          '(lambda ()
+             (flymake-mode t)))
+
+;; auto-complete.el
+;; http://www.nomtats.com/2010/11/auto-completeelemacs.html
+(setq ac-dir "elisp/auto-complete-1.3/")
+(add-to-list 'load-path ac-dir)
+(require 'auto-complete-config)
+(ac-config-default)
+ 
+(add-to-list 'ac-dictionary-directories (concat ac-dir "ac-dict/"))
+(global-set-key "\M-/" 'ac-start)
+;; C-n/C-p で候補を選択
+(define-key ac-complete-mode-map "\C-n" 'ac-next)
+(define-key ac-complete-mode-map "\C-p" 'ac-previous)
